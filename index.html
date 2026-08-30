@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Commission Calculator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6fa;
+            color: #1f2937;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #1d4ed8;
+            color: white;
+            padding: 25px 20px;
+            border-radius: 18px 18px 0 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 25px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 0 0 18px 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            flex: 1;
+            border: none;
+            padding: 13px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .calculate-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .calculate-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .reset-btn {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .reset-btn:hover {
+            background: #d1d5db;
+        }
+
+        .results {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            border-bottom: 1px solid #f0f0f0;
+            gap: 15px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        .result-value {
+            font-size: 15px;
+            font-weight: bold;
+            color: #111827;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .total {
+            margin-top: 12px;
+            padding: 16px;
+            background: #eff6ff;
+            border-radius: 12px;
+            border-bottom: none;
+        }
+
+        .total .result-label {
+            font-size: 15px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .total .result-value {
+            font-size: 20px;
+            color: #1d4ed8;
+        }
+
+        .account {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 3px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 18px;
+        }
+
+        .error {
+            display: none;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 400px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .result-row {
+                padding: 11px 0;
+            }
+
+            .result-value {
+                font-size: 14px;
+            }
+
+            .total .result-value {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Commission Calculator</h1>
+        <p>Calculate commission, TDS & GST instantly</p>
+    </div>
+
+    <div class="card">
+
+        <div class="section-title">
+            Input Details
+        </div>
+
+        <!-- Error message -->
+        <div class="error" id="errorMessage"></div>
+
+        <!-- Loan Amount -->
+        <div class="input-group">
+
+            <label for="loanAmount">
+                Loan Amount (₹)
+            </label>
+
+            <input
+                type="number"
+                id="loanAmount"
+                value="1000000"
+                min="0"
+                step="1000"
+                placeholder="Enter loan amount"
+            >
+
+        </div>
+
+
+        <!-- Commission Rate -->
+        <div class="input-group">
+
+            <label for="rate">
+                Commission Rate (%)
+            </label>
+
+            <input
+                type="number"
+                id="rate"
+                value="1.5"
+                min="0"
+                step="0.01"
+                placeholder="Enter commission rate"
+            >
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="buttons">
+
+            <button
+                type="button"
+                class="calculate-btn"
+                onclick="calculate()"
+            >
+                Calculate
+            </button>
+
+            <button
+                type="button"
+                class="reset-btn"
+                onclick="resetCalculator()"
+            >
+                Reset
+            </button>
+
+        </div>
+
+
+        <!-- RESULTS
+             Hidden until Calculate is pressed
+        -->
+
+        <div
+            class="results"
+            id="results"
+            style="display: none;"
+        >
+
+            <div class="section-title">
+                Calculation Result
+            </div>
+
+
+            <!-- Gross Commission -->
+
+            <div class="result-row">
+
+                <div>
+                    <div class="result-label">
+                        Gross Commission
+                    </div>
+                </div>
+
+                <div
+                    class="result-value"
+                    id="grossCommission"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- Commission -->
+
+            <div class="result-row">
+
+                <div>
+
+                    <div class="result-label">
+                        Commission
+                    </div>
+
+                    <div class="account">
+                        CR 7009051111111
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="commission"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- TDS -->
+
+            <div class="result-row">
+
+                <div>
+
+                    <div class="result-label">
+                        TDS (5%)
+                    </div>
+
+                    <div class="account">
+                        CR SOLID102425501
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="tds"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- CGST -->
+
+            <div class="result-row">
+
+                <div>
+
+                    <div class="result-label">
+                        CGST (9%)
+                    </div>
+
+                    <div class="account">
+                        CR 7900102416135
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="cgst"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- SGST -->
+
+            <div class="result-row">
+
+                <div>
+
+                    <div class="result-label">
+                        SGST (9%)
+                    </div>
+
+                    <div class="account">
+                        CR 7900102416136
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="sgst"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL -->
+
+            <div class="result-row total">
+
+                <div>
+
+                    <div class="result-label">
+                        TOTAL
+                    </div>
+
+                    <div class="account">
+                        DR SOLID107625510
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="total"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        Commission Calculator
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   FORMAT CURRENCY
+========================================= */
+
+function formatCurrency(amount) {
+
+    return new Intl.NumberFormat('en-IN', {
+
+        style: 'currency',
+
+        currency: 'INR',
+
+        minimumFractionDigits: 2,
+
+        maximumFractionDigits: 2
+
+    }).format(amount);
+
+}
+
+
+/* =========================================
+   CALCULATE
+========================================= */
+
+function calculate() {
+
+    const loanAmountInput =
+        document.getElementById("loanAmount");
+
+    const rateInput =
+        document.getElementById("rate");
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+    const results =
+        document.getElementById("results");
+
+
+    // Get values
+
+    const loanAmount =
+        parseFloat(loanAmountInput.value);
+
+    const rate =
+        parseFloat(rateInput.value);
+
+
+    // Clear previous error
+
+    errorMessage.style.display = "none";
+
+    errorMessage.textContent = "";
+
+
+    // Validate Loan Amount
+
+    if (
+        isNaN(loanAmount) ||
+        loanAmount <= 0
+    ) {
+
+        errorMessage.textContent =
+            "Please enter a valid loan amount.";
+
+        errorMessage.style.display = "block";
+
+        results.style.display = "none";
+
+        loanAmountInput.focus();
+
+        return;
+
+    }
+
+
+    // Validate Rate
+
+    if (
+        isNaN(rate) ||
+        rate < 0
+    ) {
+
+        errorMessage.textContent =
+            "Please enter a valid commission rate.";
+
+        errorMessage.style.display = "block";
+
+        results.style.display = "none";
+
+        rateInput.focus();
+
+        return;
+
+    }
+
+
+    /* =========================================
+       CALCULATIONS
+    ========================================= */
+
+
+    // Gross Commission
+
+    const grossCommission =
+        loanAmount * (rate / 100);
+
+
+    // TDS = 5% of Gross Commission
+
+    const tds =
+        grossCommission * 0.05;
+
+
+    // Commission after TDS
+
+    const commission =
+        grossCommission - tds;
+
+
+    // CGST = 9% of Gross Commission
+
+    const cgst =
+        grossCommission * 0.09;
+
+
+    // SGST = 9% of Gross Commission
+
+    const sgst =
+        grossCommission * 0.09;
+
+
+    // Total
+
+    const total =
+        commission +
+        tds +
+        cgst +
+        sgst;
+
+
+    /* =========================================
+       DISPLAY RESULTS
+    ========================================= */
+
+
+    document.getElementById("grossCommission").textContent =
+        formatCurrency(grossCommission);
+
+
+    document.getElementById("commission").textContent =
+        formatCurrency(commission);
+
+
+    document.getElementById("tds").textContent =
+        formatCurrency(tds);
+
+
+    document.getElementById("cgst").textContent =
+        formatCurrency(cgst);
+
+
+    document.getElementById("sgst").textContent =
+        formatCurrency(sgst);
+
+
+    document.getElementById("total").textContent =
+        formatCurrency(total);
+
+
+    // Show results ONLY after Calculate is pressed
+
+    results.style.display = "block";
+
+}
+
+
+/* =========================================
+   RESET
+========================================= */
+
+function resetCalculator() {
+
+    // Reset input values
+
+    document.getElementById("loanAmount").value =
+        "1000000";
+
+    document.getElementById("rate").value =
+        "1.5";
+
+
+    // Hide error
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+    errorMessage.style.display =
+        "none";
+
+    errorMessage.textContent =
+        "";
+
+
+    // Hide results
+
+    document.getElementById("results").style.display =
+        "none";
+
+}
+
+</script>
+
+</body>
+</html>
