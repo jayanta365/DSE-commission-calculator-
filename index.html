@@ -443,7 +443,7 @@
              Hidden until Calculate is pressed
         -->
 
-        <div
+                <div
             class="results"
             id="results"
             style="display: none;"
@@ -453,154 +453,61 @@
                 Calculation Result
             </div>
 
-
-            <!-- Gross Commission -->
-
-            <div class="result-row">
-
+            <div class="result-row total">
                 <div>
                     <div class="result-label">
-                        Gross Commission
+                        Business Development Expenditure
                     </div>
-                </div>
-
-                <div
-                    class="result-value"
-                    id="grossCommission"
-                >
-                    ₹0.00
-                </div>
-
-            </div>
-
-
-            <!-- Commission -->
-
-            <div class="result-row">
-
-                <div>
-
-                    <div class="result-label">
-                        Commission payable
-                    </div>
-
                     <div class="account">
-                        CR SOLID051111111
+                        DR SOLID-107625510
                     </div>
-
                 </div>
-
-                <div
-                    class="result-value"
-                    id="commission"
-                >
-                    ₹0.00
-                </div>
-
+                <div class="result-value" id="total">₹0.00</div>
             </div>
 
-
-            <!-- TDS -->
-
             <div class="result-row">
-
                 <div>
-
                     <div class="result-label">
-                        TDS (5%)
+                        TDS Payable @ 2%
                     </div>
-
                     <div class="account">
-                        CR SOLID102425501
+                        CR SOLID-102425501
                     </div>
-
                 </div>
-
-                <div
-                    class="result-value"
-                    id="tds"
-                >
-                    ₹0.00
-                </div>
-
+                <div class="result-value" id="tds">₹0.00</div>
             </div>
 
-
-            <!-- CGST -->
-
             <div class="result-row">
-
                 <div>
-
                     <div class="result-label">
                         CGST (9%)
                     </div>
-
                     <div class="account">
                         CR 7900102416135
                     </div>
-
                 </div>
-
-                <div
-                    class="result-value"
-                    id="cgst"
-                >
-                    ₹0.00
-                </div>
-
+                <div class="result-value" id="cgst">₹0.00</div>
             </div>
 
-
-            <!-- SGST -->
-
             <div class="result-row">
-
                 <div>
-
                     <div class="result-label">
                         SGST (9%)
                     </div>
-
                     <div class="account">
                         CR 7900102416136
                     </div>
-
                 </div>
-
-                <div
-                    class="result-value"
-                    id="sgst"
-                >
-                    ₹0.00
-                </div>
-
+                <div class="result-value" id="sgst">₹0.00</div>
             </div>
 
-
-            <!-- TOTAL -->
-
             <div class="result-row total">
-
                 <div>
-
                     <div class="result-label">
-                        TOTAL
+                        Credit Beneficiary A/c
                     </div>
-
-                    <div class="account">
-                        DR SOLID107625510
-                    </div>
-
                 </div>
-
-                <div
-                    class="result-value"
-                    id="total"
-                >
-                    ₹0.00
-                </div>
-
+                <div class="result-value" id="creditBeneficiary">₹0.00</div>
             </div>
 
         </div>
@@ -913,10 +820,14 @@ function showSection(section) {
     registeredSection.classList.add("hidden");
 
     if (section === "unregistered") {
+        resetCalculator();
         unregisteredSection.classList.remove("hidden");
     } else if (section === "registered") {
+        resetRegisteredCalculator();
         registeredSection.classList.remove("hidden");
     } else {
+        resetCalculator();
+        resetRegisteredCalculator();
         startScreen.classList.remove("hidden");
     }
 
@@ -930,160 +841,44 @@ function showSection(section) {
 
 function calculate() {
 
-    const loanAmountInput =
-        document.getElementById("loanAmount");
-
-    const rateInput =
-        document.getElementById("rate");
-
-    const errorMessage =
-        document.getElementById("errorMessage");
-
-    const results =
-        document.getElementById("results");
-
-
-    // Get values
-
-    const loanAmount =
-        parseFloat(loanAmountInput.value);
-
-    const rate =
-        parseFloat(rateInput.value);
-
-
-    // Clear previous error
+    const loanAmount = parseFloat(document.getElementById("loanAmount").value);
+    const rate = parseFloat(document.getElementById("rate").value);
+    const errorMessage = document.getElementById("errorMessage");
+    const results = document.getElementById("results");
 
     errorMessage.style.display = "none";
-
     errorMessage.textContent = "";
 
-
-    // Validate Loan Amount
-
-    if (
-        isNaN(loanAmount) ||
-        loanAmount <= 0
-    ) {
-
-        errorMessage.textContent =
-            "Please enter a valid loan amount.";
-
+    if (isNaN(loanAmount) || loanAmount <= 0) {
+        errorMessage.textContent = "Please enter a valid loan amount.";
         errorMessage.style.display = "block";
-
         results.style.display = "none";
-
-        loanAmountInput.focus();
-
         return;
-
     }
 
-
-    // Validate Rate
-
-    if (
-        isNaN(rate) ||
-        rate < 0
-    ) {
-
-        errorMessage.textContent =
-            "Please enter a valid commission rate.";
-
+    if (isNaN(rate) || rate < 0) {
+        errorMessage.textContent = "Please enter a valid commission rate.";
         errorMessage.style.display = "block";
-
         results.style.display = "none";
-
-        rateInput.focus();
-
         return;
-
     }
 
+    const grossCommission = loanAmount * (rate / 100);
+    const tds = grossCommission * 0.02;
+    const cgst = grossCommission * 0.09;
+    const sgst = grossCommission * 0.09;
 
-    /* =========================================
-       CALCULATIONS
-    ========================================= */
+    const businessDevelopmentExpenditure = grossCommission + tds + cgst + sgst;
+    const creditBeneficiary = businessDevelopmentExpenditure - tds;
 
-
-    // Gross Commission
-
-    const grossCommission =
-        loanAmount * (rate / 100);
-
-
-    // TDS = 5% of Gross Commission
-
-    const tds =
-        grossCommission * 0.05;
-
-
-    // Commission after TDS
-
-    const commission =
-        grossCommission - tds;
-
-
-    // CGST = 9% of Gross Commission
-
-    const cgst =
-        grossCommission * 0.09;
-
-
-    // SGST = 9% of Gross Commission
-
-    const sgst =
-        grossCommission * 0.09;
-
-
-    // Total
-
-    const total =
-        commission +
-        tds +
-        cgst +
-        sgst;
-
-
-    /* =========================================
-       DISPLAY RESULTS
-    ========================================= */
-
-
-    document.getElementById("grossCommission").textContent =
-        formatCurrency(grossCommission);
-
-
-    document.getElementById("commission").textContent =
-        formatCurrency(commission);
-
-
-    document.getElementById("tds").textContent =
-        formatCurrency(tds);
-
-
-    document.getElementById("cgst").textContent =
-        formatCurrency(cgst);
-
-
-    document.getElementById("sgst").textContent =
-        formatCurrency(sgst);
-
-
-    document.getElementById("total").textContent =
-        formatCurrency(total);
-
-
-    // Show results ONLY after Calculate is pressed
+    document.getElementById("total").textContent = formatCurrency(businessDevelopmentExpenditure);
+    document.getElementById("tds").textContent = formatCurrency(tds);
+    document.getElementById("cgst").textContent = formatCurrency(cgst);
+    document.getElementById("sgst").textContent = formatCurrency(sgst);
+    document.getElementById("creditBeneficiary").textContent = formatCurrency(creditBeneficiary);
 
     results.style.display = "block";
-
 }
-
-
-/* =========================================
-   RESET - UNREGISTERED DEALER
-========================================= */
 
 function resetCalculator() {
 
@@ -1319,6 +1114,14 @@ function resetRegisteredCalculator() {
 
 </script>
 <script>
+
+
+document.querySelectorAll("input").forEach(function(input) {
+    input.addEventListener("input", function() {
+        document.getElementById("results").style.display = "none";
+        document.getElementById("resultsReg").style.display = "none";
+    });
+});
 
 if ("serviceWorker" in navigator) {
 
