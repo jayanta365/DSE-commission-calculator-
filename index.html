@@ -188,6 +188,30 @@
             margin-top: 3px;
         }
 
+
+        /* Ledger style boxes for DR / CR / Credit entries */
+        .ledger-box {
+            background: #f8fafc;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 14px;
+            margin: 10px 0;
+        }
+
+        .ledger-box .result-label {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .ledger-box .account {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .ledger-box .result-value {
+            font-weight: 800;
+        }
+
         .footer {
             text-align: center;
             font-size: 11px;
@@ -779,6 +803,16 @@
 
 <script>
 
+
+function applyLedgerBoxStyle() {
+    document.querySelectorAll('.results .result-row, .results .result-row.total, .resultsReg .result-row, .resultsReg .result-row.total').forEach(function(row) {
+        const text = row.innerText.toUpperCase();
+        if (text.includes('DR') || text.includes('CR') || text.includes('CREDIT')) {
+            row.classList.add('ledger-box');
+        }
+    });
+}
+
 /* =========================================
    FORMAT CURRENCY
 ========================================= */
@@ -1080,6 +1114,10 @@ function calculateRegistered() {
 
 
     // Show results ONLY after Calculate is pressed
+
+    applyLedgerBoxStyle();
+
+    applyLedgerBoxStyle();
 
     results.style.display = "block";
 
