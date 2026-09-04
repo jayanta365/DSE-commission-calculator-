@@ -863,13 +863,21 @@ function calculate() {
         return;
     }
 
-    const grossCommission = loanAmount * (rate / 100);
-    const tds = grossCommission * 0.02;
-    const cgst = grossCommission * 0.09;
-    const sgst = grossCommission * 0.09;
+    // Commission amount = Loan Amount x Input Commission Rate
+    const commissionAmount = loanAmount * (rate / 100);
 
-    const businessDevelopmentExpenditure = grossCommission + tds + cgst + sgst;
-    const creditBeneficiary = businessDevelopmentExpenditure - tds;
+    // TDS = 2% of Commission Amount
+    const tds = commissionAmount * 0.02;
+
+    // GST = 9% each on Commission Amount
+    const cgst = commissionAmount * 0.09;
+    const sgst = commissionAmount * 0.09;
+
+    // Business Development Expenditure (DR) = Commission + CGST + SGST
+    const businessDevelopmentExpenditure = commissionAmount + cgst + sgst;
+
+    // Credit Beneficiary A/c = Commission Amount - TDS
+    const creditBeneficiary = commissionAmount - tds;
 
     document.getElementById("total").textContent = formatCurrency(businessDevelopmentExpenditure);
     document.getElementById("tds").textContent = formatCurrency(tds);
