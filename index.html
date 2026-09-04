@@ -206,6 +206,85 @@
             margin-bottom: 15px;
         }
 
+        /* =========================================
+           START / CATEGORY SELECTION SCREEN
+        ========================================= */
+
+        .category-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        .category-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .category-card .cat-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .category-card .cat-desc {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .category-card.registered .cat-title {
+            color: #1d4ed8;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 0 0 15px 0;
+            cursor: pointer;
+            flex: none;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .badge.unregistered {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.registered {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 400px) {
 
             body {
@@ -244,7 +323,54 @@
         <p>Calculate commission, TDS & GST instantly</p>
     </div>
 
-    <div class="card">
+
+    <!-- =========================================
+         START SCREEN - CATEGORY SELECTION
+    ========================================= -->
+
+    <div class="card" id="startScreen">
+
+        <div class="section-title">
+            Select category
+        </div>
+
+        <div
+            class="category-card registered"
+            onclick="showSection('registered')"
+        >
+            <div class="cat-title">
+                Registered Dealer and Sales executive
+            </div>
+            <div class="cat-desc">
+                Tax invoice to be obtained
+            </div>
+        </div>
+
+        <div
+            class="category-card"
+            onclick="showSection('unregistered')"
+        >
+            <div class="cat-title">
+                Unregistered Dealers and Sales executive
+            </div>
+            <div class="cat-desc">
+                No tax invoice required
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         UNREGISTERED DEALER CALCULATOR
+         (original calculation, unchanged)
+    ========================================= -->
+
+    <div class="card hidden" id="unregisteredSection">
+
+        <button class="back-btn" onclick="showSection('start')">&larr; Back</button>
+
+        <span class="badge unregistered">Unregistered Dealer / Sales executive</span>
 
         <div class="section-title">
             Enter details
@@ -482,6 +608,261 @@
     </div>
 
 
+    <!-- =========================================
+         REGISTERED DEALER CALCULATOR
+         (tax invoice obtained)
+    ========================================= -->
+
+    <div class="card hidden" id="registeredSection">
+
+        <button class="back-btn" onclick="showSection('start')">&larr; Back</button>
+
+        <span class="badge registered">Registered Dealer / Sales executive</span>
+
+        <div class="section-title">
+            Enter details
+        </div>
+
+        <!-- Error message -->
+        <div class="error" id="errorMessageReg"></div>
+
+        <!-- Loan Amount -->
+        <div class="input-group">
+
+            <label for="loanAmountReg">
+                Loan Amount (₹)
+            </label>
+
+            <input
+                type="number"
+                id="loanAmountReg"
+                value=""
+                min="0"
+                step="1000"
+                placeholder="Enter loan amount"
+            >
+
+        </div>
+
+
+        <!-- Commission Rate -->
+        <div class="input-group">
+
+            <label for="rateReg">
+                Commission Rate (%)
+            </label>
+
+            <input
+                type="number"
+                id="rateReg"
+                value=""
+                min="0"
+                step="0.01"
+                placeholder="Enter commission rate"
+            >
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="buttons">
+
+            <button
+                type="button"
+                class="calculate-btn"
+                onclick="calculateRegistered()"
+            >
+                Calculate
+            </button>
+
+            <button
+                type="button"
+                class="reset-btn"
+                onclick="resetRegisteredCalculator()"
+            >
+                Reset
+            </button>
+
+        </div>
+
+
+        <!-- RESULTS
+             Hidden until Calculate is pressed
+        -->
+
+        <div
+            class="results"
+            id="resultsReg"
+            style="display: none;"
+        >
+
+            <div class="section-title">
+                Calculation Result
+            </div>
+
+
+            <!-- Commission Amount -->
+
+            <div class="result-row">
+
+                <div>
+                    <div class="result-label">
+                        Commission Amount
+                    </div>
+                </div>
+
+                <div
+                    class="result-value"
+                    id="commissionReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- GST 9% on commission -->
+
+            <div class="result-row">
+
+                <div>
+                    <div class="result-label">
+                        GST (9%)
+                    </div>
+                </div>
+
+                <div
+                    class="result-value"
+                    id="gstReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- Total Invoice Amount -->
+
+            <div class="result-row total">
+
+                <div>
+                    <div class="result-label">
+                        Total Invoice Amount
+                    </div>
+                </div>
+
+                <div
+                    class="result-value"
+                    id="totalInvoiceReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- DR Business Development Expenditure -->
+
+            <div class="result-row" style="margin-top: 8px;">
+
+                <div>
+
+                    <div class="result-label">
+                        Business Development Expenditure
+                    </div>
+
+                    <div class="account">
+                        DR SOLID-107625510
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="bdeReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- Input GST -->
+
+            <div class="result-row">
+
+                <div>
+
+                    <div class="result-label">
+                        Input GST
+                    </div>
+
+                    <div class="account">
+                        DR 7900105600106
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="inputGstReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- TDS Payable -->
+
+            <div class="result-row">
+
+                <div>
+
+                    <div class="result-label">
+                        TDS Payable (2%)
+                    </div>
+
+                    <div class="account">
+                        CR SOLID-102425501
+                    </div>
+
+                </div>
+
+                <div
+                    class="result-value"
+                    id="tdsPayableReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <!-- Credit Beneficiary A/c -->
+
+            <div class="result-row total">
+
+                <div>
+                    <div class="result-label">
+                        Credit Beneficiary A/c
+                    </div>
+                </div>
+
+                <div
+                    class="result-value"
+                    id="creditBeneficiaryReg"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
     <div class="footer">
         Commission Calculator by Jayanta
     </div>
@@ -513,7 +894,38 @@ function formatCurrency(amount) {
 
 
 /* =========================================
-   CALCULATE
+   SECTION NAVIGATION
+========================================= */
+
+function showSection(section) {
+
+    const startScreen =
+        document.getElementById("startScreen");
+
+    const unregisteredSection =
+        document.getElementById("unregisteredSection");
+
+    const registeredSection =
+        document.getElementById("registeredSection");
+
+    startScreen.classList.add("hidden");
+    unregisteredSection.classList.add("hidden");
+    registeredSection.classList.add("hidden");
+
+    if (section === "unregistered") {
+        unregisteredSection.classList.remove("hidden");
+    } else if (section === "registered") {
+        registeredSection.classList.remove("hidden");
+    } else {
+        startScreen.classList.remove("hidden");
+    }
+
+}
+
+
+/* =========================================
+   CALCULATE - UNREGISTERED DEALER
+   (original calculation, unchanged)
 ========================================= */
 
 function calculate() {
@@ -670,7 +1082,7 @@ function calculate() {
 
 
 /* =========================================
-   RESET
+   RESET - UNREGISTERED DEALER
 ========================================= */
 
 function resetCalculator() {
@@ -699,6 +1111,208 @@ function resetCalculator() {
     // Hide results
 
     document.getElementById("results").style.display =
+        "none";
+
+}
+
+
+/* =========================================
+   CALCULATE - REGISTERED DEALER
+   (tax invoice obtained)
+========================================= */
+
+function calculateRegistered() {
+
+    const loanAmountInput =
+        document.getElementById("loanAmountReg");
+
+    const rateInput =
+        document.getElementById("rateReg");
+
+    const errorMessage =
+        document.getElementById("errorMessageReg");
+
+    const results =
+        document.getElementById("resultsReg");
+
+
+    // Get values
+
+    const loanAmount =
+        parseFloat(loanAmountInput.value);
+
+    const rate =
+        parseFloat(rateInput.value);
+
+
+    // Clear previous error
+
+    errorMessage.style.display = "none";
+
+    errorMessage.textContent = "";
+
+
+    // Validate Loan Amount
+
+    if (
+        isNaN(loanAmount) ||
+        loanAmount <= 0
+    ) {
+
+        errorMessage.textContent =
+            "Please enter a valid loan amount.";
+
+        errorMessage.style.display = "block";
+
+        results.style.display = "none";
+
+        loanAmountInput.focus();
+
+        return;
+
+    }
+
+
+    // Validate Rate
+
+    if (
+        isNaN(rate) ||
+        rate < 0
+    ) {
+
+        errorMessage.textContent =
+            "Please enter a valid commission rate.";
+
+        errorMessage.style.display = "block";
+
+        results.style.display = "none";
+
+        rateInput.focus();
+
+        return;
+
+    }
+
+
+    /* =========================================
+       CALCULATIONS
+    ========================================= */
+
+
+    // Commission Amount = Loan Amount x Rate
+
+    const commissionAmount =
+        loanAmount * (rate / 100);
+
+
+    // GST = 9% of Commission Amount
+
+    const gst =
+        commissionAmount * 0.09;
+
+
+    // Total Invoice Amount = Commission + GST
+
+    const totalInvoiceAmount =
+        commissionAmount + gst;
+
+
+    // DR Business Development Expenditure
+    // = Total Invoice Amount (shown again)
+
+    const bde =
+        totalInvoiceAmount;
+
+
+    // Input GST = 9% of Commission Amount (calculated again)
+
+    const inputGst =
+        commissionAmount * 0.09;
+
+
+    // TDS Payable = 2% of Commission Amount
+
+    const tdsPayable =
+        commissionAmount * 0.02;
+
+
+    // Credit Beneficiary A/c
+    // = DR Business Development Expenditure + Input GST - TDS Payable
+
+    const creditBeneficiary =
+        bde + inputGst - tdsPayable;
+
+
+    /* =========================================
+       DISPLAY RESULTS
+    ========================================= */
+
+
+    document.getElementById("commissionReg").textContent =
+        formatCurrency(commissionAmount);
+
+
+    document.getElementById("gstReg").textContent =
+        formatCurrency(gst);
+
+
+    document.getElementById("totalInvoiceReg").textContent =
+        formatCurrency(totalInvoiceAmount);
+
+
+    document.getElementById("bdeReg").textContent =
+        formatCurrency(bde);
+
+
+    document.getElementById("inputGstReg").textContent =
+        formatCurrency(inputGst);
+
+
+    document.getElementById("tdsPayableReg").textContent =
+        formatCurrency(tdsPayable);
+
+
+    document.getElementById("creditBeneficiaryReg").textContent =
+        formatCurrency(creditBeneficiary);
+
+
+    // Show results ONLY after Calculate is pressed
+
+    results.style.display = "block";
+
+}
+
+
+/* =========================================
+   RESET - REGISTERED DEALER
+========================================= */
+
+function resetRegisteredCalculator() {
+
+    // Reset input values
+
+    document.getElementById("loanAmountReg").value =
+        "";
+
+    document.getElementById("rateReg").value =
+        "";
+
+
+    // Hide error
+
+    const errorMessage =
+        document.getElementById("errorMessageReg");
+
+    errorMessage.style.display =
+        "none";
+
+    errorMessage.textContent =
+        "";
+
+
+    // Hide results
+
+    document.getElementById("resultsReg").style.display =
         "none";
 
 }
