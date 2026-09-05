@@ -477,7 +477,7 @@
                 Calculation Result
             </div>
 
-            <div class="result-row">
+            <div class="result-row ledger-box">
 
                 <div>
                     <div class="result-label">
@@ -493,7 +493,7 @@
             </div>
 
 
-            <div class="result-row">
+            <div class="result-row ledger-box">
 
                 <div>
                     <div class="result-label">
@@ -509,7 +509,7 @@
             </div>
 
 
-            <div class="result-row">
+            <div class="result-row ledger-box">
 
                 <div>
                     <div class="result-label">
@@ -525,7 +525,7 @@
             </div>
 
 
-            <div class="result-row">
+            <div class="result-row ledger-box">
 
                 <div>
                     <div class="result-label">
@@ -541,7 +541,7 @@
             </div>
 
 
-            <div class="result-row total">
+            <div class="result-row total ledger-box credit-highlight">
 
                 <div>
                     <div class="result-label">
@@ -936,6 +936,8 @@ function calculate() {
     document.getElementById("cgst").textContent = formatCurrency(cgst);
     document.getElementById("sgst").textContent = formatCurrency(sgst);
     document.getElementById("creditBeneficiary").textContent = formatCurrency(creditBeneficiary);
+
+    applyLedgerBoxStyle();
 
     results.style.display = "block";
 }
