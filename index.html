@@ -497,7 +497,7 @@
 
                 <div>
                     <div class="result-label">
-                        TDS Payable (2%)
+                        TDS Payable @ 2%
                     </div>
                     <div class="account">
                         CR SOLID-102425501
@@ -1062,10 +1062,10 @@ function calculateRegistered() {
         loanAmount * (rate / 100);
 
 
-    // GST = 9% of Commission Amount
+    // GST = 18% of Commission Amount
 
     const gst =
-        commissionAmount * 0.09;
+        commissionAmount * 0.18;
 
 
     // Total Invoice Amount = Commission + GST
@@ -1081,10 +1081,10 @@ function calculateRegistered() {
         totalInvoiceAmount;
 
 
-    // Input GST = 9% of Commission Amount (calculated again)
+    // Input GST = 18% of Commission Amount (calculated again)
 
     const inputGst =
-        commissionAmount * 0.09;
+        commissionAmount * 0.18;
 
 
     // TDS Payable = 2% of Commission Amount
