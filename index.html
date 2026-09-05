@@ -1062,29 +1062,29 @@ function calculateRegistered() {
         loanAmount * (rate / 100);
 
 
-    // GST = 18% of Commission Amount
+    // GST for Invoice Amount = 18% of Commission Amount
 
     const gst =
         commissionAmount * 0.18;
 
 
-    // Total Invoice Amount = Commission + GST
+    // Total Invoice Amount = Commission + 18% GST
 
     const totalInvoiceAmount =
         commissionAmount + gst;
 
 
-    // DR Business Development Expenditure
-    // = Total Invoice Amount (shown again)
+    // Business Development Expenditure
+    // = Commission Amount + 9% GST
 
     const bde =
-        totalInvoiceAmount;
+        commissionAmount + (commissionAmount * 0.09);
 
 
-    // Input GST = 18% of Commission Amount (calculated again)
+    // Input GST = 9% of Commission Amount
 
     const inputGst =
-        commissionAmount * 0.18;
+        commissionAmount * 0.09;
 
 
     // TDS Payable = 2% of Commission Amount
